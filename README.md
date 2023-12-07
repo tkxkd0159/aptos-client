@@ -5,11 +5,13 @@ brew install aptos
 
 # 1. Setting up the localnet
 
+## Run a local network
 aptos node run-local-testnet --with-indexer-api
 
+## Set up the profile
 aptos init --profile local --network local
 
-## Resetting the local network
+## Resetting the local network (Clean the state and start with a new chain at genesis)
 aptos node run-local-testnet --force-restart 
 
 ## Publish Move modules to the local testnet
