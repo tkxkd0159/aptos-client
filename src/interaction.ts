@@ -1,5 +1,6 @@
 import {
     Aptos,
+    LedgerInfo,
     AccountAddressInput,
     UserTransactionResponse,
     GetAccountOwnedTokensQueryResponse, MoveModuleBytecode, TransactionResponse,
@@ -15,10 +16,22 @@ class Query {
     }
 
     async getAccountModules(accountAddress: AccountAddressInput, options?: PaginationArgs): Promise<MoveModuleBytecode[]> {
-        return await this.app.getAccountModules({ accountAddress, options });
+        return await this.app.account.getAccountModules({ accountAddress, options });
     }
     async getAccountOwnedTokens(accountAddress: AccountAddressInput, options?: TokenStandardArg & PaginationArgs & OrderByArg<TokenOwnership>): Promise<GetAccountOwnedTokensQueryResponse> {
-        return await this.app.getAccountOwnedTokens({ accountAddress, options });
+        return await this.app.account.getAccountOwnedTokens({ accountAddress, options });
+    }
+
+    /**
+     * @returns LedgerInfo
+     * - epoch: The current epoch number associated with the chain network
+     * - ledger_version: The ledger version that represents the blockchain state at a specific time
+     * - ledger_timestamp: The timestamp associated with the ledger, indicating the time when the ledger was last updated
+     * - block_height: The height of the block
+    **/
+    async getLedgerInfo(): Promise<LedgerInfo> {
+        return await this.app.getLedgerInfo();
+
     }
 }
 

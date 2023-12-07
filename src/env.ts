@@ -1,5 +1,5 @@
 export default {
-    account: "0x3e98f3086a6fc7fc94fdcd5c77971179dd48835ede99e4b1defc79ac96306f8a",
+    account: "0xd178232ba72bcc15ca7ef77f2bfda8a7d849ec16c666966fe2a9371229596f19",
     chainID: 4,
     api: {
         node: "http://127.0.0.1:8080",
