@@ -41,9 +41,22 @@ aptos node run-local-testnet --with-indexer-api --force-restart
 aptos move compile --package-dir contracts/hello_world --named-addresses tester="your address"
 
 ## Publish Move modules to the local testnet
-aptos move publish --package-dir contracts/hello_world --named-addresses tester="your address" --private-key-file .secrets/privKey --url http://127.0.0.1:8080
-# Using Typescript SDK
+aptos move publish --package-dir contracts/hello_world --named-addresses tester="your address" --private-key-file .secrets/private-key --url http://127.0.0.1:8080
+```
 
+```ts
+// Using Typescript SDK
+
+// * compile Move module
+const modulePath = "contracts/hello_world";
+const compiledJSONPath = pathJoin(modulePath, "HelloWorld.json")
+const moduleAddresses = [{ name: "tester", address: tester.accountAddress }];
+const { metadataBytes, byteCode } = await compileCodeAndGetPackageBytesToPublish(modulePath, compiledJSONPath, moduleAddresses)
+
+// * publish Move module
+const signedTx = await c.executor().buildAndSignPkgTx(tester, metadataBytes, byteCode);
+const txRes = await c.executor().submitTx(signedTx);
+printTxRes(txRes);
 ```
 
 # Concepts
@@ -69,7 +82,7 @@ Ledger version이 통상적으로 다른 메인넷에서 사용하는 block heig
 
 
 ## Account
-Aptos Move accounts have a public address, an authentication key, a public key, and a private key. The public address is permanent, always matching the account's initial authentication key. Account addresses are 32-bytes. They are usually shown as 64 hex characters
+Aptos Move accounts have a public address, an authentication key, a public key, and a private key. The public address is permanent, always matching the account's initial authentication key. Aptos supports only a single, unified identifier for an account. Accounts on Aptos are universally represented as a 32-byte hex string. The hex string can be padded with leading zeroes if it's shorter than 32-bytes. For example, `0x42` is the same as `0x0000000000000000000000000000000000000000000000000000000000000042`
 
 * Native outstanding features
   * Rotating authentication key. The Aptos account model facilitates the unique ability to rotate an account's private key. Since an account's address is the initial authentication key, the ability to sign for an account can be transferred to another private key without changing its public address. This is similar to changing passwords in the web2 world.

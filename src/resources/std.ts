@@ -1,6 +1,6 @@
 import { MoveStructId } from '@aptos-labs/ts-sdk';
 
-export interface DefaultResource {
+export interface RCoinStore {
     coin: { value: number };
     deposit_events: { counter: number };
     withdraw_events: { counter: number };

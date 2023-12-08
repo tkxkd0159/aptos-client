@@ -64,8 +64,6 @@ export function compilePackage(
     const addressArg = namedAddresses.map(({ name, address }) => `${name}=${address}`).join(" ");
 
     const compileCommand = `aptos move build-publish-payload --json-output-file ${outputFile} --package-dir ${packageDir} --named-addresses ${addressArg} --assume-yes`;
-    console.log("Running the compilation locally, in a real situation you may want to compile this ahead of time.");
-    console.log(compileCommand);
     execSync(compileCommand);
 }
 
@@ -81,4 +79,18 @@ export function getPackageBytesToPublish(filePath: string): { metadataBytes: Hex
     const byteCode = jsonData.args[1].value;
 
     return { metadataBytes, byteCode };
+}
+
+/**
+ * @description
+ * Only use for local testing
+ */
+export async function compileCodeAndGetPackageBytesToPublish(
+    packageDir: string,
+    outputFile: string,
+    namedAddresses: Array<{ name: string; address: AccountAddress }>,
+): Promise<{ metadataBytes: HexInput; byteCode: HexInput[] }> {
+    compilePackage(packageDir, outputFile, namedAddresses);
+    await sleep(1000);
+    return getPackageBytesToPublish(outputFile);
 }
