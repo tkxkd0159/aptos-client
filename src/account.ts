@@ -39,7 +39,7 @@ export class AptosAccount {
         return Account.fromPrivateKeyAndAddress({ privateKey: key, address, legacy: true });
     }
 
-    static printAccountInfo(account: Account) {
+    static AccountInfoJSON(account: Account): any {
         const WIDTH = 16;
 
         const vals: any[] = [
@@ -49,15 +49,11 @@ export class AptosAccount {
             account.publicKey.toString(),
         ];
 
-        console.log(
-            `\n${"Address".padEnd(WIDTH)} ${"Auth Key".padEnd(WIDTH)} ${"Private Key".padEnd(
-                WIDTH,
-            )} ${"Public Key".padEnd(WIDTH)}`,
-        )
-        console.log(vals
-            .map((v) => {
-                return v.padEnd(WIDTH);
-            })
-            .join(" "))
+        return {
+            "authentication_key": Account.authKey({ publicKey: account.publicKey }).toString(),
+            "private_key": account.privateKey.toString(),
+            "public_key": account.publicKey.toString(),
+            "address": account.accountAddress.toString(),
+        }
     }
 }

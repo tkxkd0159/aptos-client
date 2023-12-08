@@ -4,9 +4,16 @@
   - [Block height \& Ledger version](#block-height--ledger-version)
   - [Transaction](#transaction)
   - [Account](#account)
+  - [Asset type](#asset-type)
+    - [Coin](#coin)
+    - [Aptos Token](#aptos-token)
+    - [Fungible Asset](#fungible-asset)
+    - [Digital Asset](#digital-asset)
 
 
 # Getting Started
+
+## Setup localnet
 ```sh
 brew install aptos
 
@@ -22,9 +29,6 @@ aptos init --profile local --network local
 
 ## Resetting the local network (Clean the state and start with a new chain at genesis)
 aptos node run-local-testnet --with-indexer-api --force-restart 
-
-## Publish Move modules to the local testnet
-aptos move publish --profile local --package-dir /opt/git/aptos-core/aptos-move/move-examples/hello_blockchain --named-addresses HelloBlockchain=local
 ```
 
 * Node API: This is a REST API that runs directly on the node. It enables core write functionality such as transaction submission and a limited set of read functionality, such as reading account resources or Move module information.
@@ -33,6 +37,14 @@ aptos move publish --profile local --package-dir /opt/git/aptos-core/aptos-move/
 * Faucet: You can use this to create accounts and mint APT on your local network.
 * Transaction Stream Service: This is a grpc stream of transactions. This is relevant to you if you are developing a custom processor.
 
+## Build Move contract
+```sh
+## Compile Move modules
+aptos move compile --package-dir contracts/hello_world --named-addresses tester="your-account-address"
+
+## Publish Move modules to the local testnet
+aptos move publish --profile local --package-dir contracts/hello_world --named-addresses HelloBlockchain=local
+```
 
 # Concepts
 ## Epoch

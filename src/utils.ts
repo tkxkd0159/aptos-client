@@ -1,4 +1,7 @@
-import { TransactionResponse, TransactionResponseType, UserTransactionResponse } from "@aptos-labs/ts-sdk";
+import { execSync } from "child_process";
+import path from "path";
+import fs from "fs";
+import { TransactionResponse, TransactionResponseType, UserTransactionResponse, AccountAddress, HexInput, Hex } from "@aptos-labs/ts-sdk";
 
 export function isUserTx(tx: TransactionResponse): boolean {
     return tx.type === TransactionResponseType.User;
@@ -38,4 +41,44 @@ export function sleep(ms: number) {
     return new Promise((_) => {
         setTimeout(_, ms);
     });
+}
+
+/**
+ * A convenience function to compile a package locally with the CLI
+ * @param packageDir Path to a move package (the folder with a Move.toml file)
+ * @param outputFile JSON output file to write publication transaction to
+ * @param namedAddresses
+ */
+export function compilePackage(
+    packageDir: string,
+    outputFile: string,
+    namedAddresses: Array<{ name: string; address: AccountAddress }>,
+) {
+    console.log("In order to run compilation, you must have the `aptos` CLI installed.");
+    try {
+        execSync("aptos --version");
+    } catch (e) {
+        console.log("aptos is not installed. Please install it from the instructions on aptos.dev");
+    }
+
+    const addressArg = namedAddresses.map(({ name, address }) => `${name}=${address}`).join(" ");
+
+    const compileCommand = `aptos move build-publish-payload --json-output-file ${outputFile} --package-dir ${packageDir} --named-addresses ${addressArg} --assume-yes`;
+    console.log("Running the compilation locally, in a real situation you may want to compile this ahead of time.");
+    console.log(compileCommand);
+    execSync(compileCommand);
+}
+
+/**
+ * A convenience function to get the compiled package metadataBytes and byteCode
+ * @param filePath Path to JSON output file which is publication transaction (root path is execution path)
+ */
+export function getPackageBytesToPublish(filePath: string): { metadataBytes: HexInput; byteCode: HexInput[] } {
+    const cwd = process.cwd();
+    const modulePath = path.join(cwd, filePath);
+    const jsonData = JSON.parse(fs.readFileSync(modulePath, "utf8"));
+    const metadataBytes = jsonData.args[0].value;
+    const byteCode = jsonData.args[1].value;
+
+    return { metadataBytes, byteCode };
 }
