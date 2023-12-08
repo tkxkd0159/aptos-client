@@ -22,21 +22,18 @@ class AptosAccount {
      * Rotate authentication key of an account. Only legacy Ed25519 scheme is supported for now.
      * @example
      * ```ts
-     * const [txhash, newPrivKey] = await AptosAccount.rotateAuthKey(c.app(), acc, SEED[1]);
+     * const [txResponse, newPrivKey] = await AptosAccount.rotateAuthKey(c.app(), acc, SEED[1]);
      * const newAcc = AptosAccount.getAccountAfterRotate(acc.accountAddress, newPrivKey);
      * // private/public/authentication key are changed without changing account address
      * // you can cehck the rotated authentication_key at same account address in accountData
      * const info = await c.q().accountInfo(acc.accountAddress);
      * ```
      */
-    static async rotateAuthKey(app: Aptos, from: Account, seed: HexInput): Promise<[string, Ed25519PrivateKey]> {
+    static async rotateAuthKey(app: Aptos, from: Account, seed: HexInput): Promise<[UserTransactionResponse, Ed25519PrivateKey]> {
         const privateKey = new Ed25519PrivateKey(seed);
         let res = await app.rotateAuthKey({ fromAccount: from, toNewPrivateKey: privateKey });
-        if (res.type === TransactionResponseType.Pending) {
-            res = await app.waitForTransaction({ transactionHash: res.hash });
-        }
-
-        return [res.hash, privateKey];
+        res = await app.waitForTransaction({ transactionHash: res.hash });
+        return [res as UserTransactionResponse, privateKey];
     }
 
     static getAccountAfterRotate(input: AccountAddressInput, key: PrivateKey): Account {

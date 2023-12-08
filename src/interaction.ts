@@ -1,13 +1,24 @@
 import {
-    Aptos, AptosConfig,
-    LedgerInfo, AccountData, MoveStructId,
+    Aptos, AptosConfig, Account,
+    LedgerInfo, AccountData, MoveStructId, MoveFunctionId, TypeTag,
+    InputGenerateTransactionPayloadData, InputGenerateTransactionOptions, AnyRawTransaction, AccountAuthenticator, InputEntryFunctionData, EntryFunctionArgumentTypes, SimpleEntryFunctionArgumentTypes,
     AccountAddressInput,
     UserTransactionResponse,
-    GetAccountOwnedTokensQueryResponse, MoveModuleBytecode, TransactionResponse, AnyNumber,
+    GetAccountOwnedTokensQueryResponse, MoveModuleBytecode, TransactionResponse, AnyNumber, AccountAddress,
 } from "@aptos-labs/ts-sdk"
 
 import { WaitForTransactionOptions, OrderByArg, TokenStandardArg, PaginationArgs, LedgerVersionArg, DefaultQueryOpts, TokenOwnership } from "./option"
-import { isUserTx } from "./utils";
+
+/**
+ * @param data: SingleSignerTransaction | MultiAgentTransaction
+ * @param sender: Sender's AccountAuthenticator
+ * @param feePayer: FeePayer's AccountAuthenticator (optional)
+ */
+interface SignedTx {
+    data: AnyRawTransaction;
+    sender: AccountAuthenticator;
+    feePayer?: AccountAuthenticator;
+}
 
 class Query {
     private app: Aptos;
@@ -61,6 +72,33 @@ class Tx {
     async fundAccount(accountAddress: AccountAddressInput, amount: number, options?: WaitForTransactionOptions): Promise<UserTransactionResponse> {
         return await this.app.fundAccount({ accountAddress, amount, options });
     }
+
+    async buildAndSignTx(sender: Account, data: InputGenerateTransactionPayloadData, options?: { genTxOpts?: InputGenerateTransactionOptions, feePayer?: Account }): Promise<SignedTx> {
+        let withFeePayer = false;
+        if (options?.feePayer) {
+            withFeePayer = true;
+        }
+
+        const SingleSignerTransaction = await this.app.build.transaction({ sender: sender.accountAddress, data, options: options?.genTxOpts, withFeePayer });
+        const senderAuthenticator = this.app.sign.transaction({ signer: sender, transaction: SingleSignerTransaction });
+        if (withFeePayer) {
+            const feePayerAuthenticator = this.app.sign.transactionAsFeePayer({ signer: sender, transaction: SingleSignerTransaction });
+            return { data: SingleSignerTransaction, sender: senderAuthenticator, feePayer: feePayerAuthenticator };
+        }
+        return { data: SingleSignerTransaction, sender: senderAuthenticator };
+    }
+
+    async submitTx(tx: SignedTx): Promise<UserTransactionResponse> {
+        const pendingRes = await this.app.submit.transaction({ transaction: tx.data, senderAuthenticator: tx.sender, feePayerAuthenticator: tx.feePayer });
+        const res = await this.app.waitForTransaction({ transactionHash: pendingRes.hash });
+        return res as UserTransactionResponse;
+    }
+
+    async sendAPT(from: Account, to: AccountAddressInput, amount: number, options?: { genTxOpts?: InputGenerateTransactionOptions, feePayer?: Account }): Promise<UserTransactionResponse> {
+        const txData = DataFactory.createInputEntryFunctionData("0x1::coin::transfer", [to, amount], ["0x1::aptos_coin::AptosCoin"]);
+        const signedTx = await this.buildAndSignTx(from, txData, options);
+        return await this.submitTx(signedTx);
+    }
 }
 
 class Client {
@@ -87,4 +125,19 @@ class Client {
     }
 }
 
-export { Client }
+class DataFactory {
+    constructor() { }
+
+    static createInputEntryFunctionData(functionName: MoveFunctionId,
+        args: Array<EntryFunctionArgumentTypes | SimpleEntryFunctionArgumentTypes>,
+        typeArgs?: Array<TypeTag | string>): InputEntryFunctionData {
+        return {
+            function: functionName,
+            typeArguments: typeArgs,
+            functionArguments: args,
+        }
+    }
+
+}
+
+export { Client, DataFactory }
