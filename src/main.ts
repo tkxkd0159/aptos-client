@@ -14,11 +14,9 @@ async function main(): Promise<string> {
     const aptosConfig = new AptosConfig({ network: Network.LOCAL });
     const c = new Client(aptosConfig);
     const tester = getTestAccount();
-    const res = await c.executor().fundAccount(tester.accountAddress, 100000000);
-    printTxRes(res);
+    await c.executor().fundAccount(tester.accountAddress, 100000000);
     let resource = await c.q().accountResource<DefaultResource>(tester.accountAddress, TOKEN_PATH["APT"]);
     console.log("resource: ", resource);
-
 
     return "\nFinished!"
 }

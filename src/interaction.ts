@@ -73,6 +73,13 @@ class Tx {
         return await this.app.fundAccount({ accountAddress, amount, options });
     }
 
+    /**
+     *
+     * @param sender signer's account
+     * @param data InputEntryFunctionData | InputScriptData | InputMultiSigData
+     * @param options
+     * @returns
+     */
     async buildAndSignTx(sender: Account, data: InputGenerateTransactionPayloadData, options?: { genTxOpts?: InputGenerateTransactionOptions, feePayer?: Account }): Promise<SignedTx> {
         let withFeePayer = false;
         if (options?.feePayer) {
