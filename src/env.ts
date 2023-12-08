@@ -1,5 +1,5 @@
 export default {
-    account: "0xd178232ba72bcc15ca7ef77f2bfda8a7d849ec16c666966fe2a9371229596f19",
+    account: "0x84770b13863e6c123f9c5602d9619f00fb2120900b8b8a0ff0c68b94964c3040", // legacy ED25519
     chainID: 4,
     api: {
         node: "http://127.0.0.1:8080",

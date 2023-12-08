@@ -11,12 +11,4 @@ const TOKEN_PATH: { [denom: string]: MoveStructId } = {
     "APT": "0x1::coin::CoinStore<0x1::aptos_coin::AptosCoin>",
 }
 
-
-class APT {
-    constructor() { }
-    static parseAccountResource(resource: any): DefaultResource {
-        return resource as DefaultResource;
-    }
-}
-
-export { APT, TOKEN_PATH }
+export { TOKEN_PATH, DefaultResource }

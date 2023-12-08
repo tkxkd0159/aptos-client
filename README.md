@@ -46,3 +46,9 @@ Ledger version이 통상적으로 다른 메인넷에서 사용하는 block heig
 * The sequence number of the transaction matches the sender account's sequence number.
 * The sender account's balance is greater than the maximum gas amount.
 * The expiration time of the transaction has not passed.
+
+
+## Account
+Aptos Move accounts have a public address, an authentication key, a public key, and a private key. The public address is permanent, always matching the account's initial authentication key.
+
+The Aptos account model facilitates the unique ability to rotate an account's private key. Since an account's address is the initial authentication key, the ability to sign for an account can be transferred to another private key without changing its public address.
