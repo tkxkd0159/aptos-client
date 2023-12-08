@@ -36,11 +36,11 @@ function testSetup(): [Client, Account] {
     if (!existsSync(scrtPath)) {
         mkdirSync(scrtPath, { recursive: true });
     }
-    if (!existsSync(pathJoin(scrtPath, "privKey"))) {
-        writeFileSync(pathJoin(scrtPath, "privKey"), tester.privateKey.toString());
+    if (!existsSync(pathJoin(scrtPath, "private-key"))) {
+        writeFileSync(pathJoin(scrtPath, "private-key"), tester.privateKey.toString());
     }
-    if (!existsSync(pathJoin(scrtPath, "acctInfo.json"))) {
-        writeFileSync(pathJoin(scrtPath, "acctInfo.json"), JSON.stringify(AptosAccount.AccountInfoJSON(tester), undefined, 2));
+    if (!existsSync(pathJoin(scrtPath, "account-info.json"))) {
+        writeFileSync(pathJoin(scrtPath, "account-info.json"), JSON.stringify(AptosAccount.AccountInfoJSON(tester), undefined, 2));
     }
 
     return [client, tester];

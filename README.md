@@ -17,9 +17,6 @@
 ```sh
 brew install aptos
 
-
-# 1. Setting up the localnet
-
 ## Run a local network
 aptos node run-local-testnet --with-indexer-api
 
@@ -39,11 +36,14 @@ aptos node run-local-testnet --with-indexer-api --force-restart
 
 ## Build Move contract
 ```sh
+# Using CLI
 ## Compile Move modules
-aptos move compile --package-dir contracts/hello_world --named-addresses tester="your-account-address"
+aptos move compile --package-dir contracts/hello_world --named-addresses tester="your address"
 
 ## Publish Move modules to the local testnet
-aptos move publish --profile local --package-dir contracts/hello_world --named-addresses HelloBlockchain=local
+aptos move publish --package-dir contracts/hello_world --named-addresses tester="your address" --private-key-file .secrets/privKey --url http://127.0.0.1:8080
+# Using Typescript SDK
+
 ```
 
 # Concepts
