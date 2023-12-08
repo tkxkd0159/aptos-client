@@ -7,7 +7,7 @@ import {
 
 type MoveType<T extends Serializable & EntryFunctionArgument> = MoveScriptType<T> | MoveOption<T>;
 type MoveScriptType<T extends Serializable & EntryFunctionArgument> = U8 | U16 | U32 | U64 | U128 | U256 | Bool | AccountAddress | MoveVector<T> | MoveString
-class MoveTypeEncoder {
+export class MoveTypeEncoder {
 
     constructor() { }
 
@@ -38,5 +38,3 @@ class MoveTypeEncoder {
         return s.toUint8Array();
     }
 }
-
-export { MoveTypeEncoder }

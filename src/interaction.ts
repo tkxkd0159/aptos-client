@@ -108,7 +108,7 @@ class Tx {
     }
 }
 
-class Client {
+export class Client {
     private core: Aptos;
     private query: Query;
     private tx: Tx;
@@ -132,7 +132,7 @@ class Client {
     }
 }
 
-class DataFactory {
+export class DataFactory {
     constructor() { }
 
     static createInputEntryFunctionData(functionName: MoveFunctionId,
@@ -146,5 +146,3 @@ class DataFactory {
     }
 
 }
-
-export { Client, DataFactory }

@@ -2,19 +2,17 @@ import {
     Aptos,
     Account, Ed25519PrivateKey, HexInput, AccountAddressInput, AccountAddress, PrivateKey,
     UserTransactionResponse,
-    TransactionResponseType
 } from '@aptos-labs/ts-sdk'
-import { printTxRes } from './utils';
 
-const SEED = ["b23bc4fba89a643cdd3ceb43b1b996c7f5a797b0abd84c3ab900a25319c09c06", "1f63e5d3babd01b58fbf3974c2c98b553aa3f67a44846895b84a52cda966f65a"]
+export const SEED = ["b23bc4fba89a643cdd3ceb43b1b996c7f5a797b0abd84c3ab900a25319c09c06", "1f63e5d3babd01b58fbf3974c2c98b553aa3f67a44846895b84a52cda966f65a"]
 
-function getTestAccount() {
+export function getTestAccount() {
     const privateKey = new Ed25519PrivateKey(SEED[0]);
     const account = Account.fromPrivateKey({ privateKey, legacy: true });
     return account;
 }
 
-class AptosAccount {
+export class AptosAccount {
     constructor() { }
 
     /**
@@ -62,10 +60,4 @@ class AptosAccount {
             })
             .join(" "))
     }
-}
-
-export {
-    getTestAccount,
-    AptosAccount,
-    SEED
 }

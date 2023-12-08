@@ -1,10 +1,10 @@
 export {
     WaitForTransactionOptions,
-    TokenStandardArg, OrderByArg,
+    TokenStandardArg, OrderByArg, PaginationArgs, LedgerVersionArg
 } from "@aptos-labs/ts-sdk"
 
 import { GetAccountOwnedTokensQueryResponse, PaginationArgs, LedgerVersionArg } from "@aptos-labs/ts-sdk"
-type TokenOwnership = GetAccountOwnedTokensQueryResponse[0]
+export type TokenOwnership = GetAccountOwnedTokensQueryResponse[0]
 
 /**
  *
@@ -13,9 +13,4 @@ type TokenOwnership = GetAccountOwnedTokensQueryResponse[0]
  * @param limit specifies the maximum number of items or records to return in a query result. Default is 25.
  * @param ledgerVersion specifies ledger version of transactions. By default latest version will be used
  */
-type DefaultQueryOpts = PaginationArgs & LedgerVersionArg
-
-export {
-    TokenOwnership,
-    DefaultQueryOpts, PaginationArgs, LedgerVersionArg,
-}
+export type DefaultQueryOpts = PaginationArgs & LedgerVersionArg
