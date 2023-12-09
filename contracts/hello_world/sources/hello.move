@@ -1,4 +1,5 @@
-module tester::message {
+address tester {
+    module message {
     use std::error;
     use std::signer;
     use std::string;
@@ -56,4 +57,5 @@ module tester::message {
             ENO_MESSAGE
         );
     }
+}
 }
