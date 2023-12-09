@@ -45,17 +45,27 @@ address tester {
             old_message_holder.message = message;
         }
     }
+    }
+
+    #[test_only]
+    module message_tester {
+    use std::signer;
+    use std::string;
+
+    use aptos_framework::account;
+
+    use tester::message;
 
     #[test(account = @0x1)]
-    public entry fun sender_can_set_message(account: signer) acquires MessageHolder {
+    public entry fun sender_can_set_message(account: signer) {
         let addr = signer::address_of(&account);
-        aptos_framework::account::create_account_for_test(addr);
-        set_message(account, string::utf8(b"Hello, Blockchain"));
-
+        account::create_account_for_test(addr);
+        message::set_message(account, string::utf8(b"Hello, Blockchain"));
         assert!(
-            get_message(addr) == string::utf8(b"Hello, Blockchain"),
-            ENO_MESSAGE
-        );
+            message::get_message(addr) == string::utf8(b"Hello, Blockchain"),
+            0
+            );
+
+        }
     }
-}
 }
