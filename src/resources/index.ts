@@ -1,5 +1,5 @@
 export {
-    RCoinStore, TOKEN_PATH,
+    DataFactory, RCoinStore, TOKEN_PATH,
 } from './std'
 
 export {

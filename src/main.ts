@@ -3,12 +3,12 @@ import { join as pathJoin } from 'path';
 import { cwd } from 'process';
 
 import {
-    AptosConfig, Network, Account, InputEntryFunctionData, MoveString, UserTransactionResponse, AccountAddress,
+    AptosConfig, Network, Account, UserTransactionResponse, AccountAddress,
 } from '@aptos-labs/ts-sdk'
 
-import { Client, DataFactory } from './interaction';
+import { Client } from './interaction';
 import { getTestAccount, AptosAccount } from './account';
-import { TOKEN_PATH, RCoinStore, RMessageHolder } from './resources';
+import { DataFactory, TOKEN_PATH, RCoinStore, RMessageHolder } from './resources';
 import { printTxRes, compileCodeAndGetPackageBytesToPublish } from './utils';
 
 const FAUCET = "0x4bcc9700eee6d186d7d32a5ee36767146238954aad7b0c5e23393ef95c4cfd40"
@@ -19,7 +19,7 @@ async function main(): Promise<string> {
     const res = await c.executor().fundAccount(tester.accountAddress, 100000000);
     console.log("Faucet: ", res.sender);
     let resource = await c.q().accountResource<RCoinStore>(tester.accountAddress, TOKEN_PATH["APT"]);
-    console.log("resource: ", resource);
+    console.log("Tester's CoinStoreSate: ", resource);
 
     // const txRes = await compileAndPublishPkg(c, tester, "contracts/interview", "Interview.json", [{ name: "ljs", address: tester.accountAddress }]);
     // printTxRes(txRes);
@@ -35,13 +35,11 @@ async function main(): Promise<string> {
     let balance = await c.q().accountResource<RCoinStore>(tester.accountAddress, TOKEN_PATH["APT"]);
     console.log("resource: ", balance);
 
-    // // * call Move module
+    // * call Move module
     // const modules = await c.q().accountModules(tester.accountAddress);
     // console.log("modules: ", modules);
-
     // const resourceName = "MessageHolder";
     // const savedMsg = await c.q().accountResource<RMessageHolder>(tester.accountAddress, DataFactory.createResourcePath(tester.accountAddress, moduleName, resourceName));
-    // // const savedMsg = await c.q().accountResources(tester.accountAddress);
     // console.log("savedMsg: ", savedMsg.message);
 
     return "\nFinished!"

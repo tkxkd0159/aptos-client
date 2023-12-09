@@ -1,6 +1,6 @@
 import {
     Aptos, AptosConfig, Account,
-    LedgerInfo, AccountData, MoveStructId, MoveFunctionId, TypeTag, HexInput,
+    LedgerInfo, AccountData, MoveStructId, HexInput,
     InputGenerateTransactionPayloadData, InputGenerateTransactionOptions, AnyRawTransaction, AccountAuthenticator, InputEntryFunctionData, EntryFunctionArgumentTypes, SimpleEntryFunctionArgumentTypes,
     AccountAddressInput,
     UserTransactionResponse,
@@ -8,6 +8,7 @@ import {
 } from "@aptos-labs/ts-sdk"
 
 import { WaitForTransactionOptions, OrderByArg, TokenStandardArg, PaginationArgs, LedgerVersionArg, DefaultQueryOpts, TokenOwnership } from "./option"
+import { DataFactory } from "./resources";
 
 /**
  * @param data SingleSignerTransaction | MultiAgentTransaction
@@ -180,27 +181,5 @@ export class Client {
 
     app(): Aptos {
         return this.core;
-    }
-}
-
-export class DataFactory {
-    constructor() { }
-
-    static createInputEntryFunctionData(functionName: MoveFunctionId,
-        args: Array<EntryFunctionArgumentTypes | SimpleEntryFunctionArgumentTypes>,
-        typeArgs?: Array<TypeTag | string>): InputEntryFunctionData {
-        return {
-            function: functionName,
-            functionArguments: args,
-            typeArguments: typeArgs,
-        }
-    }
-
-    static createFuncPath(address: AccountAddressInput, moduleName: string, methodName: string): MoveFunctionId {
-        return `${address.toString()}::${moduleName}::${methodName}`;
-    }
-
-    static createResourcePath(address: AccountAddressInput, moduleName: string, resourceName: string): MoveStructId {
-        return `${address.toString()}::${moduleName}::${resourceName}`;
     }
 }

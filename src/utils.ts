@@ -37,7 +37,7 @@ export function printTxRes(res: TransactionResponse) {
     }
 }
 
-export function sleep(ms: number) {
+export function sleep(ms: number): Promise<void> {
     return new Promise((_) => {
         setTimeout(_, ms);
     });
