@@ -5,6 +5,9 @@ version = "0.0.0"
 [addresses]
 tester = "_"
 
+[dev-addresses]
+tester = "0xEF"
+
 [dependencies.AptosFramework]
 git = 'https://github.com/aptos-labs/aptos-core.git'
 rev = 'devnet'
