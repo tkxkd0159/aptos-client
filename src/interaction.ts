@@ -1,10 +1,10 @@
 import {
     Aptos, AptosConfig, Account,
     LedgerInfo, AccountData, MoveStructId, HexInput,
-    InputGenerateTransactionPayloadData, InputGenerateTransactionOptions, AnyRawTransaction, AccountAuthenticator, InputEntryFunctionData, EntryFunctionArgumentTypes, SimpleEntryFunctionArgumentTypes,
+    InputViewRequestData, InputGenerateTransactionPayloadData, InputGenerateTransactionOptions, AnyRawTransaction, AccountAuthenticator,
     AccountAddressInput,
     UserTransactionResponse,
-    GetAccountOwnedTokensQueryResponse, MoveModuleBytecode, TransactionResponse, AnyNumber, MoveResource,
+    GetAccountOwnedTokensQueryResponse, MoveModuleBytecode, TransactionResponse, AnyNumber, MoveResource, MoveValue,
 } from "@aptos-labs/ts-sdk"
 
 import { WaitForTransactionOptions, OrderByArg, TokenStandardArg, PaginationArgs, LedgerVersionArg, DefaultQueryOpts, TokenOwnership } from "./option"
@@ -34,6 +34,19 @@ class Query {
     }
 
     // General
+
+    /**
+     *
+     * @param input object
+     * @param input.function MoveFunctionId
+     * @param input.functionArguments Array[MoveValue]
+     * @param input.typeArguments Array[MoveStructId]
+     * @param options
+     * @returns
+     */
+    async view(input: InputViewRequestData, options?: LedgerVersionArg): Promise<MoveValue[]> {
+        return await this.app.view({ payload: input, options });
+    }
 
     /**
      * @returns LedgerInfo

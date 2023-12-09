@@ -37,7 +37,15 @@ async function main(): Promise<string> {
     console.log("modules: ", modules);
     const resourceName = "MessageHolder";
     const savedMsg = await c.q().accountResource<RMessageHolder>(tester.accountAddress, DataFactory.createResourcePath(tester.accountAddress, moduleName, resourceName));
-    console.log("savedMsg: ", savedMsg.message);
+    const savedMsg2 = await c.q().view(
+        {
+            function: DataFactory.createFuncPath(tester.accountAddress, moduleName, "get_message"),
+            functionArguments: [tester.accountAddress.toString()]
+        }
+    )
+    if (savedMsg.message !== savedMsg2[0]) {
+        throw new Error("Check saved message again!");
+    }
 
     return "\nFinished!"
 }
