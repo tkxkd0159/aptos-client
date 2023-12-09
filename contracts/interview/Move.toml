@@ -1,0 +1,11 @@
+[package]
+name = "JaeseungInterview"
+version = "0.0.0"
+
+[addresses]
+ljs = "_"
+
+[dependencies.AptosFramework]
+git = 'https://github.com/aptos-labs/aptos-core.git'
+rev = 'devnet'
+subdir = 'aptos-move/framework/aptos-framework'      # path to dir containing Move.toml inside git repo

@@ -11,6 +11,8 @@ import { getTestAccount, AptosAccount } from './account';
 import { TOKEN_PATH, RCoinStore, RMessageHolder } from './resources';
 import { printTxRes, compileCodeAndGetPackageBytesToPublish } from './utils';
 
+const FAUCET = "0x4bcc9700eee6d186d7d32a5ee36767146238954aad7b0c5e23393ef95c4cfd40"
+
 async function main(): Promise<string> {
     const [c, tester] = testSetup();
 
@@ -19,25 +21,28 @@ async function main(): Promise<string> {
     let resource = await c.q().accountResource<RCoinStore>(tester.accountAddress, TOKEN_PATH["APT"]);
     console.log("resource: ", resource);
 
-    const txRes = await compileAndPublishPkg(c, tester, "contracts/hello_world", "HelloWorld.json", [{ name: "tester", address: tester.accountAddress }]);
-    printTxRes(txRes);
+    // const txRes = await compileAndPublishPkg(c, tester, "contracts/interview", "Interview.json", [{ name: "ljs", address: tester.accountAddress }]);
+    // printTxRes(txRes);
 
-    const moduleName = "message";
+    const moduleName = "transfer";
     const txData = DataFactory.createInputEntryFunctionData(
-        DataFactory.createFuncPath(tester.accountAddress, moduleName, "set_message"),
-        ['Do it']);
+        DataFactory.createFuncPath(tester.accountAddress, moduleName, "transfer_coin"),
+        [FAUCET, 746], ["0x1::aptos_coin::AptosCoin"]);
     const signedTx2 = await c.executor().buildAndSignTx(tester, txData);
     const txRes2 = await c.executor().submitTx(signedTx2);
     printTxRes(txRes2);
 
-    // * call Move module
-    const modules = await c.q().accountModules(tester.accountAddress);
-    console.log("modules: ", modules);
+    let balance = await c.q().accountResource<RCoinStore>(tester.accountAddress, TOKEN_PATH["APT"]);
+    console.log("resource: ", balance);
 
-    const resourceName = "MessageHolder";
-    const savedMsg = await c.q().accountResource<RMessageHolder>(tester.accountAddress, DataFactory.createResourcePath(tester.accountAddress, moduleName, resourceName));
-    // const savedMsg = await c.q().accountResources(tester.accountAddress);
-    console.log("savedMsg: ", savedMsg.message);
+    // // * call Move module
+    // const modules = await c.q().accountModules(tester.accountAddress);
+    // console.log("modules: ", modules);
+
+    // const resourceName = "MessageHolder";
+    // const savedMsg = await c.q().accountResource<RMessageHolder>(tester.accountAddress, DataFactory.createResourcePath(tester.accountAddress, moduleName, resourceName));
+    // // const savedMsg = await c.q().accountResources(tester.accountAddress);
+    // console.log("savedMsg: ", savedMsg.message);
 
     return "\nFinished!"
 }
@@ -68,8 +73,11 @@ function testSetup(): [Client, Account] {
 
 async function compileAndPublishPkg(client: Client, signer: Account, modulePath: string, outfileName: string, namedAddress: Array<{ name: string; address: AccountAddress }>): Promise<UserTransactionResponse> {
     // * compile Move module
-    const compiledJSONPath = pathJoin(modulePath, "build", outfileName)
-    const { metadataBytes, byteCode } = await compileCodeAndGetPackageBytesToPublish(modulePath, compiledJSONPath, namedAddress);
+    const compiledJSONPath = pathJoin(modulePath, "build")
+    if (!existsSync(compiledJSONPath)) {
+        mkdirSync(compiledJSONPath, { recursive: true });
+    }
+    const { metadataBytes, byteCode } = await compileCodeAndGetPackageBytesToPublish(modulePath, pathJoin(compiledJSONPath, outfileName), namedAddress);
 
     // * publish Move module
     const signedTx = await client.executor().buildAndSignPkgTx(signer, metadataBytes, byteCode);
