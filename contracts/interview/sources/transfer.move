@@ -2,7 +2,6 @@ module ljs::transfer {
     use std::error;
     use std::signer;
 
-    use aptos_framework::account;
     use aptos_framework::event;
     use aptos_framework::coin;
     use aptos_framework::timestamp;
@@ -25,6 +24,12 @@ module ljs::transfer {
         coin::transfer<CoinType>(from, to, amount);
     }
 
+    // Test
+
+    #[test_only]
+    use aptos_framework::account;
+
+    #[test_only]
     struct DummyCoin {}
 
     #[test(from = @0x1, to = @0x2)]
