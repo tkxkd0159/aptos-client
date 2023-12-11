@@ -1,0 +1,23 @@
+{
+  "name": "aptos_interview",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node ./src/index.ts",
+    "localnet": "aptos node run-local-testnet --with-indexer-api",
+    "localnet:reset": "aptos node run-local-testnet --with-indexer-api --force-restart",
+    "test": "aptos move clean --package-dir contracts/interview --assume-no && aptos move test --package-dir contracts/interview --coverage --dev",
+    "prove": "aptos move prove --package-dir contracts/interview --dev"
+  },
+  "author": "Jaeseung Lee",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.10.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "@aptos-labs/ts-sdk": "^1.0.0"
+  }
+}
