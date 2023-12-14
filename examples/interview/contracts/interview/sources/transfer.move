@@ -22,11 +22,22 @@ module ljs::transfer {
         amount: u64,
     }
 
+    #[event]
+    struct DoNothing has drop, store {
+        from: address,
+        timestamp: u64,
+        value: u64,
+    }
+
     public entry fun transfer_coin<CoinType>(from: &signer, to: address, amount: u64) {
         let from_addr = signer::address_of(from);
         assert!(coin::is_account_registered<CoinType>(to), not_registered(ENO_NOT_REGISTERED_COIN));
         event::emit(CoinTransfer{from: from_addr, to: to, timestamp: timestamp::now_microseconds(), amount: amount});
         coin::transfer<CoinType>(from, to, amount);
+    }
+
+    public fun do_nothing(from: address, value: u64) {
+        event::emit(DoNothing{from, timestamp: timestamp::now_microseconds(), value});
     }
 
     // Test

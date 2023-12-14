@@ -3,12 +3,13 @@ import { join as pathJoin } from 'path';
 import { cwd } from 'process';
 import { execSync } from "child_process";
 import { randomBytes } from 'crypto';
+import { Buffer } from 'buffer';
 
 import {
     Aptos, AptosConfig, Network,
     HexInput, Account, AccountAddress,
     Ed25519PrivateKey,
-    AnyRawTransaction, UserTransactionResponse, CommittedTransactionResponse,
+    AnyRawTransaction, UserTransactionResponse, CommittedTransactionResponse, Hex,
 } from '@aptos-labs/ts-sdk'
 
 const SEED = "b23bc4fba89a643cdd3ceb43b1b996c7f5a797b0abd84c3ab900a25319c09c06"
@@ -111,6 +112,8 @@ async function main(): Promise<string> {
         throw new Error("requirements are not properly implemented");
     }
 
+    await runScript(app, tester, "contracts/interview", "JaeseungInterview", "main.mv");
+
     return "\nDone!"
 }
 
@@ -174,4 +177,28 @@ function checkEvent(res: UserTransactionResponse, eventName: string, eventProper
     }
 
     return false;
+}
+
+async function runScript(app: Aptos, signer: Account, packageDir: string, packageName: string, scriptName: string): Promise<CommittedTransactionResponse> {
+    const scriptPath: string = pathJoin(cwd(), packageDir, "build", packageName, "bytecode_scripts", scriptName);
+    const binaryScriptData: Buffer = readFileSync(scriptPath);
+    const txScript = await app.build.transaction(
+        {
+            sender: signer.accountAddress,
+            data: {
+                bytecode: binaryScriptData,
+                functionArguments: [],
+            }
+        }
+    )
+
+    const res = await signAndSubmitTransaction(app, signer, txScript);
+    if (res.success) {
+        console.log("\n > Script executed successfully!!!\nEvents:\n")
+        for (let evt of (res as UserTransactionResponse).events) {
+            console.log(`${JSON.stringify(evt, undefined, 4)}`)
+        }
+    }
+
+    return res
 }
