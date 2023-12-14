@@ -9,7 +9,7 @@ import {
     Aptos, AptosConfig, Network,
     HexInput, Account, AccountAddress,
     Ed25519PrivateKey,
-    AnyRawTransaction, UserTransactionResponse, CommittedTransactionResponse, Hex,
+    AnyRawTransaction, UserTransactionResponse, CommittedTransactionResponse
 } from '@aptos-labs/ts-sdk'
 
 const SEED = "b23bc4fba89a643cdd3ceb43b1b996c7f5a797b0abd84c3ab900a25319c09c06"
